@@ -1,46 +1,66 @@
-/*** Definition Section has one variable 
-which can be accessed inside yylex()  
-and main() ***/
-%{ 
-int count = 0; 
-%} 
-  
-/*** Rule Section has three rules, first rule  
-matches with capital letters, second rule 
-matches with any character except newline and  
-third rule does not take input after the enter***/
-%% 
-[A-Z] {printf("%s capital letter\n", yytext); 
-       count++;} 
-.     {printf("%s not a capital letter\n", yytext);} 
-\n    {return 0;} 
-%% 
-  
-/*** Code Section prints the number of 
-capital letter present in the given input***/
-int yywrap(){} 
-int main(){ 
-  
-// Explanation: 
-// yywrap() - wraps the above rule section 
-/* yyin - takes the file pointer  
-          which contains the input*/
-/* yylex() - this is the main flex function 
-          which runs the Rule Section*/
-// yytext is the text in the buffer 
-  
-// Uncomment the lines below  
-// to take input from file 
-// FILE *fp; 
-// char filename[50]; 
-// printf("Enter the filename: \n"); 
-// scanf("%s",filename); 
-// fp = fopen(filename,"r"); 
-// yyin = fp; 
-  
-yylex(); 
-printf("\nNumber of Captial letters " 
-      "in the given input - %d\n", count); 
-  
-return 0; 
-} 
+%{
+/* definitions of manifest constants */
+#include <stdio.h>
+%}
+
+/* ****** regular expressions ***** */
+%option noyywrap
+seperators [\{\}\(\)\[\];]
+
+operators [\+\*\-\=\>\<]
+
+delim [ \t\n]
+ws {delim}+
+letter [A-Za-z]
+digit [0-9]
+id {letter}({letter}|{digit})*
+number {digit}+(\.{digit}+)?(E[+-]?{digit}+)?
+error ([.])+
+word ({letter}|{error})+
+
+%%
+{ws} {/* ignore */}
+void {printKeyword(yytext);}
+if  {printKeyword(yytext);}
+int  {printKeyword(yytext);}
+bool  {printKeyword(yytext);}
+string  {printKeyword(yytext);}
+class  {printKeyword(yytext);}
+interface  {printKeyword(yytext);} 
+null  {printKeyword(yytext);} 
+this  {printKeyword(yytext);} 
+extends  {printKeyword(yytext);} 
+implements  {printKeyword(yytext);} 
+for  {printKeyword(yytext);} 
+while  {printKeyword(yytext);}
+else {printKeyword(yytext);}
+return {printKeyword(yytext);}
+break {printKeyword(yytext);}
+continue {printKeyword(yytext);}
+new {printKeyword(yytext);}
+NewArray {printKeyword(yytext);}
+Print {printKeyword(yytext);}
+ReadInteger {printKeyword(yytext);}
+ReadLine {printKeyword(yytext);}
+dtoi {printKeyword(yytext);}
+itod {printKeyword(yytext);}
+btoi {printKeyword(yytext);}
+itob {printKeyword(yytext);}
+private {printKeyword(yytext);}
+protected {printKeyword(yytext);}
+public {printKeyword(yytext);}
+true {printKeyword(yytext);}
+false {printKeyword(yytext);}
+{word} {printKeyword("error");}
+%%
+void printKeyword(char* key){
+     printf("%s", key);
+ }
+/****** c functions *******/
+ int main(){
+    while(1){
+
+     yylex();
+    }
+    return 0;
+ }

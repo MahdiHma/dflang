@@ -11,20 +11,22 @@ char* stringLiteral = "T_STRINGLITERAL";
 /* ****** regular expressions ***** */
 %option noyywrap
 
-seperators [\{\}\(\)\[\]]
+seperators [\{\}\(\)\[\]\,\;]
 
-operators [\+\*\-\=\>\<]
+operators [\+\*\-\=\>\<\|\%\/\?\&]
+doubleOperators ((!=)|(==)|(<=)|(>=)|(\|\|)|(\&\&))?
 
 delim [ \t\n]
 ws {delim}+
 letter [A-Za-z]
 digit [0-9]
 id {letter}({letter}|{digit})*
-double -?(({digit}+)\.({digit}*)([eE][-+]?{digit}+)?)
-ID ({letter})+({digit}|[_])*
+double (({digit}+)\.({digit}*)([eE][-+]?{digit}+)?)
+ID ({letter})+({digit}|[_]|{letter})*
+string \".*\"
 boolean (true|false)?
 hex [a-fA-F0-9]+
-integer [+-]?({digit}+)|(0[xX]({hex})+)
+integer ({digit}+)|(0[xX]({hex})+)
 
 %%
 {ws} {/* ignore */}
@@ -61,9 +63,11 @@ operators {printKeyword(yytext);}
 
 {double} {printID(doubleLiteral, yytext);}
 {boolean} {printID(boolLiteral,yytext);}
-{seperators} {printKeyword("yytext");}
-{operators} {printKeyword("yylex");}
+{seperators} {printKeyword(yytext);}
+{doubleOperators} {printKeyword(yytext);}
+{operators} {printKeyword(yytext);}
 {integer} {printID(integerLiteral,yytext);}
+{string} {printID(stringLiteral, yytext);}
 {ID} {printID(ID, yytext); }
 
 %%

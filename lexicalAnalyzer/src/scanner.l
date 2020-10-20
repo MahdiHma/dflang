@@ -1,15 +1,19 @@
+%option noyywrap
+%option header-file="lex.yy.h"
+
 %{
-/* definitions of manifest constants */
+#include <iostream>
 #include <stdio.h>
 char* ID = "T_ID";
 char* boolLiteral = "T_BOOLEANLITERAL";
 char* integerLiteral = "T_INTLITERAL";
 char* doubleLiteral = "T_DOUBLELITERAL";
 char* stringLiteral = "T_STRINGLITERAL";
-%}
+void printKeyword(char* key);
+void printID(char* IDType, char* value);
 
-/* ****** regular expressions ***** */
-%option noyywrap
+#define YY_DECL int yylex()
+%}
 
 seperators [\{\}\(\)\[\]\,\;]
 
@@ -25,8 +29,9 @@ double (({digit}+)\.({digit}*)([eE][-+]?{digit}+)?)
 ID ({letter})+({digit}|[_]|{letter})*
 string \".*\"
 boolean (true|false)?
-hex [a-fA-F0-9]+
-integer ({digit}+)|(0[xX]({hex})+)
+hex [a-fA-F0-9]
+integer ({digit})+|(0[xX]({hex})+)
+
 
 %%
 {ws} {/* ignore */}
@@ -35,6 +40,7 @@ if  {printKeyword(yytext);}
 int  {printKeyword(yytext);}
 bool  {printKeyword(yytext);}
 string  {printKeyword(yytext);}
+double  {printKeyword(yytext);}
 class  {printKeyword(yytext);}
 interface  {printKeyword(yytext);} 
 null  {printKeyword(yytext);} 
@@ -61,6 +67,7 @@ protected {printKeyword(yytext);}
 public {printKeyword(yytext);}
 operators {printKeyword(yytext);}
 
+
 {double} {printID(doubleLiteral, yytext);}
 {boolean} {printID(boolLiteral,yytext);}
 {seperators} {printKeyword(yytext);}
@@ -70,21 +77,18 @@ operators {printKeyword(yytext);}
 {string} {printID(stringLiteral, yytext);}
 {ID} {printID(ID, yytext); }
 
-%%
-/****** c functions *******/
- int main(){
-    while(1){
+%% 
 
-     yylex();
-    }
-    return 0;
- }
+
 
  void printKeyword(char* key){
-     printf("%s\n", key);
+    //  printf("%s\n", key);     
+     fprintf(yyout,"%s\n", key);
  }
 
 
  void printID(char* IDType, char* value){
-     printf("%s %s\n", IDType, value);
+    //  printf("%s", value);
+     fprintf(yyout, "%s %s\n", IDType, value);
+
  }

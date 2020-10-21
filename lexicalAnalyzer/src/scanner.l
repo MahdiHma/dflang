@@ -22,7 +22,7 @@ doubleOperators ((!=)|(==)|(<=)|(>=)|(\|\|)|(\&\&))?
 
 delim [ \t\n]
 ws {delim}+
-letter [A-Za-z]
+letter [a-zA-Z]
 digit [0-9]
 id {letter}({letter}|{digit})*
 double (({digit}+)\.({digit}*)([eE][-+]?{digit}+)?)
@@ -31,6 +31,14 @@ string \".*\"
 boolean (true|false)?
 hex [a-fA-F0-9]
 integer ({digit})+|(0[xX]({hex})+)
+
+sym [~!@#$%^&*()_+|><""''.,]
+c [//]
+s []
+l [\n]
+
+comment (({letter}|{digit}|{sym}|{s}|{l})*)
+comment2 ({c}+({letter}|{digit}|{sym}|{s})*{l})
 
 
 %%
@@ -76,7 +84,11 @@ operators {printKeyword(yytext);}
 {integer} {printID(integerLiteral,yytext);}
 {string} {printID(stringLiteral, yytext);}
 {ID} {printID(ID, yytext); }
+"/*"{comment}+"*/" {printComment(yytext);}
+;}
+{comment2} {printComment(yytext);}
 
+.    {fprintf("UNDEFINED_TOKEN\n");}  
 %% 
 
 
@@ -91,4 +103,9 @@ operators {printKeyword(yytext);}
     //  printf("%s", value);
      fprintf(yyout, "%s %s\n", IDType, value);
 
+ }
+
+ void printComment(char* value){
+     fprintf("this is comment :");
+     fprintf(yyout , %s\n", value);
  }

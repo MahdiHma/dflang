@@ -20,7 +20,7 @@ seperators [\{\}\(\)\[\]\,\;]
 operators [\+\*\-\=\>\<\|\%\/\?\&]
 doubleOperators ((!=)|(==)|(<=)|(>=)|(\|\|)|(\&\&))?
 
-delim [ \t\n]
+delim [ \t\n\r\f]
 ws {delim}+
 letter [a-zA-Z]
 digit [0-9]
@@ -33,12 +33,12 @@ hex [a-fA-F0-9]
 integer ({digit})+|(0[xX]({hex})+)
 
 sym [~!@#$%^&*()_+|><""''.,]
-c [//]
+c [/]
 s []
 l [\n]
 
-comment (({letter}|{digit}|{sym}|{s}|{l})*)
-comment2 ({c}+({letter}|{digit}|{sym}|{s})*{l})
+comment \/\*(.*)(\n)*\*\/
+comment2 \/\/[^\n]+ 
 
 
 %%
@@ -75,7 +75,8 @@ protected {printKeyword(yytext);}
 public {printKeyword(yytext);}
 operators {printKeyword(yytext);}
 
-
+{comment2} {}
+{comment} {}
 {double} {printID(doubleLiteral, yytext);}
 {boolean} {printID(boolLiteral,yytext);}
 {seperators} {printKeyword(yytext);}
@@ -84,28 +85,16 @@ operators {printKeyword(yytext);}
 {integer} {printID(integerLiteral,yytext);}
 {string} {printID(stringLiteral, yytext);}
 {ID} {printID(ID, yytext); }
-"/*"{comment}+"*/" {printComment(yytext);}
-;}
-{comment2} {printComment(yytext);}
+. {printKeyword("UNDEFINED_TOKEN");}
 
-.    {fprintf("UNDEFINED_TOKEN\n");}  
-%% 
-
-
-
+%%
  void printKeyword(char* key){
-    //  printf("%s\n", key);     
      fprintf(yyout,"%s\n", key);
  }
 
 
  void printID(char* IDType, char* value){
-    //  printf("%s", value);
      fprintf(yyout, "%s %s\n", IDType, value);
 
  }
 
- void printComment(char* value){
-     fprintf("this is comment :");
-     fprintf(yyout , %s\n", value);
- }

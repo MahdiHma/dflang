@@ -4,13 +4,13 @@
 %{
 #include <iostream>
 #include <stdio.h>
-char* ID = "T_ID";
-char* boolLiteral = "T_BOOLEANLITERAL";
-char* integerLiteral = "T_INTLITERAL";
-char* doubleLiteral = "T_DOUBLELITERAL";
-char* stringLiteral = "T_STRINGLITERAL";
-void printKeyword(char* key);
-void printID(char* IDType, char* value);
+const char* ID = "T_ID";
+const char* boolLiteral = "T_BOOLEANLITERAL";
+const char* integerLiteral = "T_INTLITERAL";
+const char* doubleLiteral = "T_DOUBLELITERAL";
+const char* stringLiteral = "T_STRINGLITERAL";
+void printKeyword(const char* key);
+void printID(const char* IDType,const char* value);
 
 #define YY_DECL int yylex()
 %}
@@ -88,12 +88,12 @@ operators {printKeyword(yytext);}
 . {printKeyword("UNDEFINED_TOKEN");}
 
 %%
- void printKeyword(char* key){
+ void printKeyword(const char* key){
      fprintf(yyout,"%s\n", key);
  }
 
 
- void printID(char* IDType, char* value){
+ void printID(const char* IDType,const char* value){
      fprintf(yyout, "%s %s\n", IDType, value);
 
  }
